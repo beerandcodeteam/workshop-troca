@@ -3,6 +3,7 @@
 use App\Models\GameMatch;
 use App\Models\MatchStatus;
 use App\Models\ParticipantType;
+use App\Services\AiOpponentService;
 use App\Services\CardPurchaseService;
 use App\Services\DiceService;
 use App\Services\MatchFinalizationService;
@@ -11,10 +12,12 @@ use App\Services\TradeService;
 use App\Services\TurnService;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
-new #[Layout('layouts::app')] #[\Livewire\Attributes\Title('Partida')] class extends Component
-{
+new #[Layout('layouts::app')]
+#[\Livewire\Attributes\Title('Partida')]
+class extends Component {
     public GameMatch $match;
 
     public ?string $lastRollResult = null;
@@ -40,6 +43,11 @@ new #[Layout('layouts::app')] #[\Livewire\Attributes\Title('Partida')] class ext
         }
 
         $this->loadMatch($match);
+
+        if (!$this->isPlayerTurn) {
+            $this->aiThinking = true;
+            $this->dispatch('init-ai-turn');
+        }
     }
 
     public function rollDice(DiceService $diceService): void
@@ -152,13 +160,10 @@ new #[Layout('layouts::app')] #[\Livewire\Attributes\Title('Partida')] class ext
                 return;
             }
 
-            $aiType = ParticipantType::where('slug', 'ai')->first();
-            if ($this->match->current_participant_type_id === $aiType->id) {
-                $this->aiThinking = true;
-            }
+            $this->aiThinking = true;
 
-            $this->refreshMatch();
-            $this->aiThinking = false;
+            $this->dispatch('init-ai-turn');
+
         } catch (\InvalidArgumentException $e) {
             $this->setFlash($e->getMessage(), 'error');
         }
@@ -171,7 +176,17 @@ new #[Layout('layouts::app')] #[\Livewire\Attributes\Title('Partida')] class ext
 
         return $this->match->tokenInventories
             ->where('participant_type_id', $playerType?->id)
-            ->sortBy(fn ($inv) => array_search($inv->tokenColor->slug, ['red', 'green', 'white', 'yellow', 'blue']));
+            ->sortBy(fn($inv) => array_search($inv->tokenColor->slug, ['red', 'green', 'white', 'yellow', 'blue']));
+    }
+
+    #[Computed]
+    public function aiInventories()
+    {
+        $aiType = ParticipantType::where('slug', 'ai')->first();
+
+        return $this->match->tokenInventories
+            ->where('participant_type_id', $aiType?->id)
+            ->sortBy(fn($inv) => array_search($inv->tokenColor->slug, ['red', 'green', 'white', 'yellow', 'blue']));
     }
 
     #[Computed]
@@ -197,7 +212,7 @@ new #[Layout('layouts::app')] #[\Livewire\Attributes\Title('Partida')] class ext
     #[Computed]
     public function canRollOrTrade(): bool
     {
-        return $this->isPlayerTurn && ! $this->match->has_acted_this_turn;
+        return $this->isPlayerTurn && !$this->match->has_acted_this_turn;
     }
 
     #[Computed]
@@ -209,7 +224,7 @@ new #[Layout('layouts::app')] #[\Livewire\Attributes\Title('Partida')] class ext
     #[Computed]
     public function canEndTurn(): bool
     {
-        return $this->isPlayerTurn && $this->match->has_acted_this_turn && ! $this->needsTokenReturn;
+        return $this->isPlayerTurn && $this->match->has_acted_this_turn && !$this->needsTokenReturn;
     }
 
     #[Computed]
@@ -231,8 +246,8 @@ new #[Layout('layouts::app')] #[\Livewire\Attributes\Title('Partida')] class ext
 
         return [
             'total_actions' => $turns->count(),
-            'dice_rolls' => $turns->filter(fn ($t) => $t->turnActionType?->slug === 'roll_dice')->count(),
-            'trades' => $turns->filter(fn ($t) => $t->turnActionType?->slug === 'trade')->count(),
+            'dice_rolls' => $turns->filter(fn($t) => $t->turnActionType?->slug === 'roll_dice')->count(),
+            'trades' => $turns->filter(fn($t) => $t->turnActionType?->slug === 'trade')->count(),
         ];
     }
 
@@ -271,6 +286,14 @@ new #[Layout('layouts::app')] #[\Livewire\Attributes\Title('Partida')] class ext
         $this->lastPointsScored = null;
     }
 
+    #[On('init-ai-turn')]
+    public function initAiTurn(AiOpponentService $aiOpponentService)
+    {
+        $result = $aiOpponentService->executeTurn($this->match);
+        $this->aiThinking = false;
+        $this->match->refresh();
+    }
+
 };
 ?>
 
@@ -280,7 +303,8 @@ new #[Layout('layouts::app')] #[\Livewire\Attributes\Title('Partida')] class ext
         <div class="space-y-6 flex-1">
             {{-- Match Stats --}}
             <div class="space-y-4">
-                <label class="font-display text-[10px] uppercase tracking-[0.2em] text-on-surface-variant font-bold">Resumo da Partida</label>
+                <label class="font-display text-[10px] uppercase tracking-[0.2em] text-on-surface-variant font-bold">Resumo
+                    da Partida</label>
                 <div class="grid grid-cols-1 gap-3">
                     <div class="bg-surface-container-low p-4 rounded-xl flex items-center justify-between hover:bg-surface-container transition-all">
                         <div class="flex items-center gap-3">
@@ -326,32 +350,62 @@ new #[Layout('layouts::app')] #[\Livewire\Attributes\Title('Partida')] class ext
                     </span>
                     <div>
                         <p class="text-xs font-bold text-on-surface">{{ $this->currentTurnLabel }}</p>
-                        <p class="text-[10px] text-on-surface-variant">Turno {{ $this->match->current_turn_number ?? 1 }}</p>
+                        <p class="text-[10px] text-on-surface-variant">
+                            Turno {{ $this->match->current_turn_number ?? 1 }}</p>
                     </div>
                 </div>
             </div>
 
             {{-- History Log --}}
-            <x-match-history-log :turns="$this->match->turns" />
+            <x-match-history-log :turns="$this->match->turns"/>
         </div>
     </aside>
 
     {{-- Main Content Area --}}
     <main class="flex-1 overflow-y-auto p-8 space-y-8">
-        {{-- Flash Messages --}}
-        @if ($flashMessage)
-            <div @class([
-                'p-4 rounded-xl border flex items-center gap-3',
-                'bg-danger/10 border-danger/20 text-danger' => $flashType === 'error',
-                'bg-secondary/10 border-secondary/20 text-secondary' => $flashType === 'success',
-            ])>
-                <span class="material-symbols-outlined">{{ $flashType === 'error' ? 'error' : 'check_circle' }}</span>
-                <span class="text-sm font-bold">{{ $flashMessage }}</span>
-            </div>
-        @endif
+        {{-- Action Bar --}}
+        <div class="flex items-center gap-3 flex-wrap">
+            <button
+                wire:click="rollDice"
+                @class([
+                    'inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold uppercase tracking-wide transition-all',
+                    'bg-primary text-on-primary hover:brightness-110 active:scale-95' => $this->canRollOrTrade,
+                    'bg-surface-variant/50 text-on-surface-variant/50 cursor-not-allowed' => !$this->canRollOrTrade,
+                ])
+                @if (!$this->canRollOrTrade) disabled @endif
+            >
+                <span class="material-symbols-outlined text-lg">casino</span>
+                Lançar Dado
+            </button>
 
-        {{-- Token Inventory --}}
-        <x-token-inventory :inventories="$this->playerInventories" />
+            @if ($this->canEndTurn)
+                <button
+                    wire:click="endTurn"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold uppercase tracking-wide bg-secondary text-on-secondary hover:brightness-110 active:scale-95 transition-all"
+                >
+                    <span class="material-symbols-outlined text-lg">skip_next</span>
+                    Encerrar Turno
+                </button>
+            @endif
+
+            {{-- Flash Messages --}}
+            @if ($flashMessage)
+                <div @class([
+                    'inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold',
+                    'bg-danger/10 border border-danger/20 text-danger' => $flashType === 'error',
+                    'bg-secondary/10 border border-secondary/20 text-secondary' => $flashType === 'success',
+                ])>
+                    <span class="material-symbols-outlined text-lg">{{ $flashType === 'error' ? 'error' : 'check_circle' }}</span>
+                    {{ $flashMessage }}
+                </div>
+            @endif
+        </div>
+
+        {{-- Token Inventories --}}
+        <div class="space-y-4">
+            <x-token-inventory :inventories="$this->playerInventories" label="Seu Inventário" />
+            <x-token-inventory :inventories="$this->aiInventories" label="Inventário da IA" />
+        </div>
 
         {{-- Card Compartments --}}
         <section class="space-y-4">
@@ -359,68 +413,29 @@ new #[Layout('layouts::app')] #[\Livewire\Attributes\Title('Partida')] class ext
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 @foreach ($this->match->compartments->sortBy('position') as $compartment)
                     <x-card-compartment
-                        :compartment="$compartment"
-                        :position="$compartment->position"
-                        :canPurchase="$this->canPurchase"
-                        :playerInventories="$this->playerInventories"
+                            :compartment="$compartment"
+                            :position="$compartment->position"
+                            :canPurchase="$this->canPurchase"
+                            :playerInventories="$this->playerInventories"
                     />
                 @endforeach
-            </div>
-        </section>
-
-        {{-- Dice Roll Action Area --}}
-        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-            <div class="lg:col-span-12">
-                <div class="bg-surface-container p-1 rounded-3xl border border-outline-variant/10">
-                    <button
-                        wire:click="rollDice"
-                        @class([
-                            'w-full rounded-[1.4rem] flex flex-col items-center justify-center gap-4 p-8 group transition-all relative overflow-hidden',
-                            'bg-gradient-to-br from-primary-dim to-primary hover:brightness-110 active:scale-[0.98]' => $this->canRollOrTrade,
-                            'bg-surface-variant/50 cursor-not-allowed opacity-50' => !$this->canRollOrTrade,
-                        ])
-                        @if (!$this->canRollOrTrade) disabled @endif
-                    >
-                        <div class="w-20 h-20 rounded-2xl bg-on-primary/20 flex items-center justify-center rotate-12 group-hover:rotate-0 transition-transform duration-500">
-                            <span class="material-symbols-outlined text-5xl text-on-primary font-black">casino</span>
-                        </div>
-                        <div class="text-center relative z-10">
-                            <span class="block text-4xl font-black font-display text-on-primary uppercase tracking-tighter">Lançar Dado</span>
-                            <span class="text-on-primary/70 text-sm font-medium tracking-widest uppercase mt-1 block">Custo: 1 Ação</span>
-                        </div>
-                    </button>
-                </div>
             </div>
         </section>
 
         {{-- Active Quotation Cards --}}
         <section class="space-y-4">
-            <label class="font-display text-xs uppercase tracking-[0.3em] text-on-surface-variant font-bold">Cotações Ativas (Mercado)</label>
+            <label class="font-display text-xs uppercase tracking-[0.3em] text-on-surface-variant font-bold">Cotações
+                Ativas (Mercado)</label>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 @foreach ($this->match->quotationCards as $quotationCard)
                     <x-quotation-card-display
-                        :quotationCard="$quotationCard"
-                        :playerInventories="$this->playerInventories"
-                        :canTrade="$this->canRollOrTrade"
+                            :quotationCard="$quotationCard"
+                            :playerInventories="$this->playerInventories"
+                            :canTrade="$this->canRollOrTrade"
                     />
                 @endforeach
             </div>
         </section>
-
-        {{-- End Turn Button --}}
-        @if ($this->canEndTurn)
-            <section>
-                <div class="bg-surface-container p-1 rounded-3xl border border-outline-variant/10">
-                    <button
-                        wire:click="endTurn"
-                        class="w-full rounded-[1.4rem] flex flex-col items-center justify-center gap-3 p-6 group transition-all bg-gradient-to-br from-secondary-dim to-secondary hover:brightness-110 active:scale-[0.98]"
-                    >
-                        <span class="material-symbols-outlined text-4xl text-on-secondary">skip_next</span>
-                        <span class="text-2xl font-black font-display text-on-secondary uppercase tracking-tighter">Encerrar Turno</span>
-                    </button>
-                </div>
-            </section>
-        @endif
 
         {{-- AI Thinking State --}}
         @if ($aiThinking)
@@ -435,7 +450,7 @@ new #[Layout('layouts::app')] #[\Livewire\Attributes\Title('Partida')] class ext
 
         {{-- Token Return UI (shown only when over 10 tokens) --}}
         @if ($this->needsTokenReturn)
-            <livewire:arena.token-return :match="$this->match" :key="'token-return-' . $this->match->id" />
+            <livewire:arena.token-return :match="$this->match" :key="'token-return-' . $this->match->id"/>
         @endif
     </main>
 
@@ -451,10 +466,10 @@ new #[Layout('layouts::app')] #[\Livewire\Attributes\Title('Partida')] class ext
                 <div class="grid grid-cols-5 gap-3">
                     @foreach (['red' => 'Vermelho', 'green' => 'Verde', 'white' => 'Branco', 'yellow' => 'Amarelo', 'blue' => 'Azul'] as $slug => $label)
                         <button
-                            wire:click="selectFreeColor('{{ $slug }}')"
-                            class="flex flex-col items-center gap-2 p-3 rounded-xl border border-outline-variant/10 bg-surface-container-low hover:bg-surface-container transition-all hover:scale-105"
+                                wire:click="selectFreeColor('{{ $slug }}')"
+                                class="flex flex-col items-center gap-2 p-3 rounded-xl border border-outline-variant/10 bg-surface-container-low hover:bg-surface-container transition-all hover:scale-105"
                         >
-                            <x-token-dot :color="$slug" size="lg" />
+                            <x-token-dot :color="$slug" size="lg"/>
                             <span class="text-[10px] font-bold uppercase text-on-surface-variant">{{ $label }}</span>
                         </button>
                     @endforeach

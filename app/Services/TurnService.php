@@ -42,10 +42,6 @@ class TurnService
             'current_turn_number' => $match->current_turn_number + 1,
             'has_acted_this_turn' => false,
         ]);
-
-        if ($nextParticipantId === $aiType->id) {
-            $this->aiOpponentService->executeTurn($match);
-        }
     }
 
     /**

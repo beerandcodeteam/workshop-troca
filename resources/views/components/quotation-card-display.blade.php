@@ -45,23 +45,21 @@
             'bg-surface-container-lowest/20 border-outline-variant/5 opacity-50' => !$canAffordLeftToRight && !$canAffordRightToLeft,
         ])>
             <div class="flex items-center justify-around gap-2">
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1">
                     @foreach ($leftItems as $item)
-                        <div class="flex items-center gap-1">
+                        @for ($i = 0; $i < $item->quantity; $i++)
                             <x-token-dot :color="$item->tokenColor->slug" size="sm" />
-                            <span class="text-[10px] font-bold">{{ $item->quantity }}x</span>
-                        </div>
+                        @endfor
                     @endforeach
                 </div>
 
                 <span class="material-symbols-outlined text-outline-variant text-sm">swap_horiz</span>
 
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1">
                     @foreach ($rightItems as $item)
-                        <div class="flex items-center gap-1">
+                        @for ($i = 0; $i < $item->quantity; $i++)
                             <x-token-dot :color="$item->tokenColor->slug" size="sm" />
-                            <span class="text-[10px] font-bold">{{ $item->quantity }}x</span>
-                        </div>
+                        @endfor
                     @endforeach
                 </div>
             </div>

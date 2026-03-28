@@ -46,17 +46,11 @@
                 @endif
             </div>
 
-            <div class="space-y-1.5">
+            <div class="flex items-center gap-1.5 flex-wrap">
                 @foreach ($cardTokens->sortBy(fn ($t) => array_search($t->tokenColor->slug, $colorOrder)) as $token)
-                    @if ($token->quantity > 0)
-                        <div class="flex items-center justify-between px-2 py-1 bg-surface-container-lowest/40 rounded-lg">
-                            <div class="flex items-center gap-2">
-                                <x-token-dot :color="$token->tokenColor->slug" size="sm" />
-                                <span class="text-[10px] font-bold text-on-surface">{{ ucfirst($token->tokenColor->name) }}</span>
-                            </div>
-                            <span class="text-xs font-bold font-display">{{ $token->quantity }}</span>
-                        </div>
-                    @endif
+                    @for ($i = 0; $i < $token->quantity; $i++)
+                        <x-token-dot :color="$token->tokenColor->slug" size="sm" />
+                    @endfor
                 @endforeach
             </div>
         </div>

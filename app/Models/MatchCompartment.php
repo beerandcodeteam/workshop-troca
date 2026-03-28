@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class MatchCompartment extends Model
 {
@@ -37,5 +38,14 @@ class MatchCompartment extends Model
             ->where('is_purchased', false)
             ->orderBy('position')
             ->first();
+    }
+
+    public function faceUpCards(): HasOne
+    {
+        return $this->hasOne(MatchCompartmentCard::class)
+            ->ofMany(
+                ['position' => 'min'],
+                fn ($query) => $query->where('is_purchased', false)
+            );
     }
 }

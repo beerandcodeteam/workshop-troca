@@ -1,6 +1,8 @@
 @props([
     'inventories' => [],
     'maxTokens' => 10,
+    'label' => 'Seu Inventário',
+    'compact' => false,
 ])
 
 @php
@@ -19,7 +21,7 @@
 
 <section class="space-y-4">
     <div class="flex items-center justify-between">
-        <label class="font-display text-xs uppercase tracking-[0.3em] text-on-surface-variant font-bold">Seu Inventário</label>
+        <label class="font-display text-xs uppercase tracking-[0.3em] text-on-surface-variant font-bold">{{ $label }}</label>
         <span @class([
             'text-[10px] px-2 py-1 rounded border',
             'text-outline-variant bg-surface-container border-outline-variant/10' => !$nearLimit && !$overLimit,
@@ -29,7 +31,7 @@
             {{ $totalTokens }} / {{ $maxTokens }}
         </span>
     </div>
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+    <div class="grid grid-cols-5 gap-2">
         @foreach ($inventories as $inventory)
             @php
                 $slug = $inventory->tokenColor->slug;
@@ -37,17 +39,14 @@
                 $hasTokens = $inventory->quantity > 0;
             @endphp
             <div @class([
-                'p-5 rounded-2xl flex flex-col items-center gap-3 border transition-all',
+                'p-2 rounded-xl flex items-center gap-2 border transition-all',
                 'bg-surface-container-low border-outline-variant/5' => $hasTokens,
                 'bg-surface-container-low/50 border-outline-variant/5 opacity-50' => !$hasTokens,
             ])>
-                <div class="w-12 h-12 rounded-full {{ $config['bg'] }} {{ $config['glow'] }} flex items-center justify-center">
-                    <span class="material-symbols-outlined {{ $config['iconText'] }}">{{ $config['icon'] }}</span>
+                <div class="w-7 h-7 shrink-0 rounded-full {{ $config['bg'] }} {{ $config['glow'] }} flex items-center justify-center">
+                    <span class="material-symbols-outlined text-sm {{ $config['iconText'] }}">{{ $config['icon'] }}</span>
                 </div>
-                <div class="text-center">
-                    <p class="text-2xl font-black font-display text-on-surface">{{ str_pad($inventory->quantity, 2, '0', STR_PAD_LEFT) }}</p>
-                    <p class="text-[10px] uppercase font-bold {{ $config['text'] }} tracking-tighter">{{ $config['label'] }}</p>
-                </div>
+                <p class="text-lg font-black font-display text-on-surface leading-none">{{ str_pad($inventory->quantity, 2, '0', STR_PAD_LEFT) }}</p>
             </div>
         @endforeach
     </div>

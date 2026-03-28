@@ -40,7 +40,7 @@
 
         <x-sidebar-link href="/support" icon="support" label="Support" />
 
-        <form method="POST" action="/logout">
+        <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors duration-200 cursor-pointer">
                 <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>

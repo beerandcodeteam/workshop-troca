@@ -122,12 +122,12 @@ new #[Layout('layouts::app')] #[Title('Arena')] class extends Component
 
             <div class="space-y-3">
                 @if($this->inProgressMatch)
-                    <x-button href="/match/{{ $this->inProgressMatch->id }}" variant="success" class="w-full justify-center">
+                    <x-button :href="route('arena.match.show', $this->inProgressMatch->id)" variant="success" class="w-full justify-center">
                         Retomar Partida
                     </x-button>
                 @endif
 
-                <x-button href="/match/setup" class="w-full justify-center">
+                <x-button :href="route('arena.match-setup')" class="w-full justify-center">
                     Nova Partida
                 </x-button>
             </div>

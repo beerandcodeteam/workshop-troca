@@ -106,12 +106,11 @@ class MatchInitializationService
 
     private function assignFirstTurn(GameMatch $match): void
     {
-        $participantTypes = ParticipantType::all();
-        $firstTurn = $participantTypes->random();
+        $participantType = ParticipantType::first();
 
         $match->update([
             'current_turn_number' => 1,
-            'current_participant_type_id' => $firstTurn->id,
+            'current_participant_type_id' => $participantType->id,
             'has_acted_this_turn' => false,
         ]);
     }

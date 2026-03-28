@@ -50,5 +50,6 @@ Route::middleware('auth')->group(function () {
         Route::livewire('/arena/match/{match}', 'pages::arena.match-board')->name('arena.match.show');
         Route::livewire('/arena/match/{match}/results', 'pages::arena.match-results')->name('arena.match.results');
         Route::livewire('/leaderboard', 'pages::leaderboard.index')->name('leaderboard');
+        Route::livewire('/settings', 'pages::settings.index')->name('settings');
     });
 });

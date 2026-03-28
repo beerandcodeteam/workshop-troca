@@ -13,58 +13,62 @@ class CardSeeder extends Seeder
     {
         $colors = TokenColor::all()->keyBy('slug');
 
-        // 45 cards: each requires exactly 5 tokens total
-        // Format: [number => [star_count, [red, green, white, yellow, blue]]]
+        // 44 purchase cards from the original board game SQL data
+        // Format: [number => [star_count, [color_slug => quantity]]]
+        // Mapping: amarelo=yellow, azul=blue, branco=white, verde=green, vermelho=red, estrela=star
         $cards = [
-            // 0-star cards (30 cards)
-            1 => [0, ['red' => 2, 'green' => 1, 'white' => 1, 'blue' => 1]],
-            2 => [0, ['red' => 1, 'green' => 2, 'white' => 1, 'yellow' => 1]],
-            3 => [0, ['red' => 1, 'green' => 1, 'white' => 2, 'blue' => 1]],
-            4 => [0, ['red' => 1, 'green' => 1, 'yellow' => 2, 'blue' => 1]],
-            5 => [0, ['red' => 1, 'white' => 1, 'yellow' => 1, 'blue' => 2]],
-            6 => [0, ['green' => 2, 'white' => 1, 'yellow' => 1, 'blue' => 1]],
-            7 => [0, ['red' => 1, 'green' => 1, 'white' => 1, 'yellow' => 1, 'blue' => 1]],
-            8 => [0, ['red' => 2, 'green' => 2, 'white' => 1]],
-            9 => [0, ['red' => 2, 'yellow' => 2, 'blue' => 1]],
-            10 => [0, ['green' => 2, 'white' => 2, 'yellow' => 1]],
-            11 => [0, ['red' => 1, 'white' => 2, 'yellow' => 1, 'blue' => 1]],
-            12 => [0, ['red' => 1, 'green' => 1, 'yellow' => 1, 'blue' => 2]],
-            13 => [0, ['green' => 1, 'white' => 1, 'yellow' => 2, 'blue' => 1]],
-            14 => [0, ['red' => 2, 'green' => 1, 'yellow' => 1, 'blue' => 1]],
-            15 => [0, ['red' => 1, 'green' => 2, 'white' => 1, 'blue' => 1]],
-            16 => [0, ['red' => 1, 'green' => 1, 'white' => 1, 'yellow' => 2]],
-            17 => [0, ['white' => 2, 'yellow' => 1, 'blue' => 2]],
-            18 => [0, ['red' => 1, 'green' => 2, 'yellow' => 2]],
-            19 => [0, ['red' => 2, 'white' => 1, 'yellow' => 1, 'blue' => 1]],
-            20 => [0, ['green' => 1, 'white' => 2, 'yellow' => 1, 'blue' => 1]],
-            21 => [0, ['red' => 1, 'green' => 1, 'white' => 2, 'yellow' => 1]],
-            22 => [0, ['red' => 1, 'white' => 1, 'yellow' => 2, 'blue' => 1]],
-            23 => [0, ['green' => 2, 'white' => 1, 'yellow' => 2]],
-            24 => [0, ['red' => 2, 'green' => 1, 'white' => 2]],
-            25 => [0, ['red' => 1, 'yellow' => 2, 'blue' => 2]],
-            26 => [0, ['green' => 1, 'white' => 1, 'yellow' => 1, 'blue' => 2]],
-            27 => [0, ['red' => 2, 'green' => 1, 'white' => 1, 'yellow' => 1]],
-            28 => [0, ['green' => 1, 'white' => 2, 'blue' => 2]],
-            29 => [0, ['red' => 1, 'green' => 2, 'white' => 2]],
-            30 => [0, ['red' => 2, 'white' => 2, 'blue' => 1]],
-            // 1-star cards (10 cards)
-            31 => [1, ['red' => 1, 'green' => 1, 'white' => 1, 'yellow' => 1, 'blue' => 1]],
-            32 => [1, ['red' => 2, 'green' => 1, 'yellow' => 1, 'blue' => 1]],
-            33 => [1, ['red' => 1, 'green' => 2, 'white' => 1, 'yellow' => 1]],
-            34 => [1, ['green' => 1, 'white' => 2, 'yellow' => 1, 'blue' => 1]],
-            35 => [1, ['red' => 1, 'white' => 1, 'yellow' => 2, 'blue' => 1]],
-            36 => [1, ['red' => 1, 'green' => 1, 'white' => 1, 'blue' => 2]],
-            37 => [1, ['red' => 2, 'green' => 2, 'blue' => 1]],
-            38 => [1, ['green' => 1, 'white' => 2, 'yellow' => 2]],
-            39 => [1, ['red' => 1, 'yellow' => 2, 'blue' => 2]],
-            40 => [1, ['red' => 2, 'white' => 1, 'yellow' => 1, 'blue' => 1]],
-            // 2-star cards (5 cards)
-            41 => [2, ['red' => 1, 'green' => 1, 'white' => 1, 'yellow' => 1, 'blue' => 1]],
-            42 => [2, ['red' => 2, 'green' => 1, 'white' => 1, 'blue' => 1]],
-            43 => [2, ['red' => 1, 'green' => 2, 'white' => 1, 'yellow' => 1]],
-            44 => [2, ['green' => 1, 'white' => 1, 'yellow' => 2, 'blue' => 1]],
-            45 => [2, ['red' => 1, 'green' => 1, 'yellow' => 1, 'blue' => 2]],
+            // 0-star cards
+            1 => [0, ['white' => 3, 'red' => 2]],
+            2 => [0, ['yellow' => 1, 'white' => 2, 'red' => 2]],
+            3 => [0, ['yellow' => 2, 'white' => 1, 'red' => 2]],
+            4 => [0, ['yellow' => 2, 'blue' => 1, 'green' => 2]],
+            5 => [0, ['yellow' => 3, 'green' => 2]],
+            6 => [0, ['yellow' => 3, 'white' => 2]],
+            7 => [0, ['blue' => 2, 'white' => 1, 'green' => 2]],
+            8 => [0, ['blue' => 2, 'green' => 2, 'red' => 1]],
+            9 => [0, ['yellow' => 1, 'white' => 2, 'green' => 2]],
+            10 => [0, ['yellow' => 1, 'blue' => 1, 'white' => 1, 'green' => 1, 'red' => 1]],
+            12 => [0, ['yellow' => 1, 'blue' => 1, 'white' => 1, 'green' => 1, 'red' => 1]],
+            13 => [0, ['blue' => 3, 'green' => 2]],
+            14 => [0, ['blue' => 2, 'white' => 2, 'red' => 1]],
+            15 => [0, ['blue' => 1, 'white' => 2, 'red' => 2]],
+            21 => [0, ['white' => 2, 'green' => 3]],
+            22 => [0, ['blue' => 1, 'green' => 2, 'red' => 2]],
+            24 => [0, ['yellow' => 1, 'blue' => 2, 'white' => 2]],
+            25 => [0, ['yellow' => 2, 'blue' => 3]],
+            26 => [0, ['yellow' => 2, 'white' => 2, 'red' => 1]],
+            28 => [0, ['yellow' => 2, 'blue' => 2, 'white' => 1]],
+            29 => [0, ['yellow' => 1, 'blue' => 1, 'white' => 1, 'green' => 1, 'red' => 1]],
+            30 => [0, ['yellow' => 2, 'blue' => 2, 'green' => 1]],
+            31 => [0, ['yellow' => 1, 'blue' => 1, 'white' => 1, 'green' => 1, 'red' => 1]],
+            32 => [0, ['blue' => 2, 'white' => 3]],
+            35 => [0, ['yellow' => 1, 'white' => 1, 'green' => 2, 'red' => 1]],
+            37 => [0, ['blue' => 2, 'green' => 1, 'red' => 2]],
+            38 => [0, ['blue' => 2, 'red' => 3]],
+            39 => [0, ['yellow' => 2, 'white' => 1, 'green' => 2]],
+            42 => [0, ['green' => 3, 'red' => 2]],
+            43 => [0, ['yellow' => 2, 'green' => 1, 'red' => 2]],
+            // 1-star cards
+            11 => [1, ['yellow' => 5]],
+            16 => [1, ['blue' => 1, 'green' => 4]],
+            17 => [1, ['yellow' => 1, 'green' => 4]],
+            18 => [1, ['blue' => 4, 'white' => 1]],
+            19 => [1, ['green' => 5]],
+            20 => [1, ['white' => 5]],
+            23 => [1, ['blue' => 5]],
+            27 => [1, ['blue' => 4, 'red' => 1]],
+            33 => [1, ['white' => 1, 'red' => 4]],
+            34 => [1, ['red' => 5]],
+            36 => [1, ['yellow' => 1, 'white' => 4]],
+            40 => [1, ['white' => 4, 'green' => 1]],
+            41 => [1, ['yellow' => 4, 'blue' => 1]],
+            44 => [1, ['green' => 1, 'red' => 4]],
         ];
+
+        Card::whereNotIn('number', array_keys($cards))->each(function (Card $card) {
+            $card->tokens()->delete();
+            $card->delete();
+        });
 
         foreach ($cards as $number => [$starCount, $tokens]) {
             $card = Card::updateOrCreate(

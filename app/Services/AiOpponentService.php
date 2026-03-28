@@ -19,6 +19,6 @@ class AiOpponentService
             'gameMatch' => $match,
         ]);
 
-        return $agent->prompt('Sua vez!');
+        return $agent->prompt('Sua Vez!');
     }
 }

@@ -23,7 +23,7 @@ use Laravel\Ai\Promptable;
 use Stringable;
 
 #[Provider(Lab::OpenAI)]
-#[Model('gpt-5.4-nano')]
+#[Model('gpt-5.4-mini')]
 class EasyAgent implements Agent, Conversational, HasTools
 {
     use Promptable;

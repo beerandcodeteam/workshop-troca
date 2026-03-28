@@ -25,14 +25,14 @@ class AnalyzeBoardTool implements Tool
      */
     public function handle(Request $request): Stringable|string
     {
-        return dd($this->gameMatch->refresh()->load(
+        return $this->gameMatch->refresh()->load(
             'difficultyTier',
             'quotationCards.trades.items.tokenColor',
             'quotationCards.trades.items.tradeSide',
             'tokenInventories.tokenColor',
             'turns',
             'compartments.faceUpCards.card.tokens.tokenColor'
-        )->toArray());
+        );
     }
 
     /**

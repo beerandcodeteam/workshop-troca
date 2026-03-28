@@ -52,7 +52,7 @@ class ExecuteTradeTool implements Tool
     {
         return [
             'quotationCardTradeId' => $schema->integer()->required()->description('Id do trade que deseja realizar'),
-            'direction' => $schema->string()->required()->description('Direção do trade que deseja realizar [left, right]'),
+            'direction' => $schema->string()->required()->description('Direção do trade que deseja realizar [left_to_right, right_to_left]'),
         ];
     }
 }

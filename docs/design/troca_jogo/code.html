@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TROCA - The Kinetic Void</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&amp;family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container": "#171a1e",
+            "error-dim": "#d7383b",
+            "outline": "#73757a",
+            "tertiary-fixed-dim": "#ff788c",
+            "tertiary-container": "#fb2a60",
+            "primary-fixed-dim": "#718bff",
+            "surface-tint": "#97a9ff",
+            "surface-dim": "#0c0e12",
+            "inverse-primary": "#124af1",
+            "surface-variant": "#22262b",
+            "primary-fixed": "#849aff",
+            "secondary-fixed-dim": "#00ec9a",
+            "on-tertiary-fixed-variant": "#780026",
+            "on-secondary-fixed-variant": "#00653f",
+            "surface-container-high": "#1c2025",
+            "error": "#ff716c",
+            "on-primary": "#002283",
+            "on-secondary-container": "#e1ffe9",
+            "tertiary-fixed": "#ff909e",
+            "on-secondary": "#005a38",
+            "primary-dim": "#3e65ff",
+            "on-error-container": "#ffa8a3",
+            "surface-container-low": "#111417",
+            "surface-container-highest": "#22262b",
+            "background": "#0c0e12",
+            "tertiary": "#ff6e84",
+            "outline-variant": "#46484c",
+            "on-primary-fixed": "#000000",
+            "secondary": "#1dfba5",
+            "inverse-surface": "#f8f9fe",
+            "secondary-fixed": "#1dfba5",
+            "on-tertiary-fixed": "#39000e",
+            "on-secondary-fixed": "#00452a",
+            "on-tertiary": "#480013",
+            "secondary-container": "#006c44",
+            "primary-container": "#849aff",
+            "surface-container-lowest": "#000000",
+            "on-surface": "#f8f9fe",
+            "secondary-dim": "#00ec9a",
+            "tertiary-dim": "#e51152",
+            "on-error": "#490006",
+            "primary": "#97a9ff",
+            "surface-bright": "#282c32",
+            "on-background": "#f8f9fe",
+            "surface": "#0c0e12",
+            "on-tertiary-container": "#000000",
+            "on-surface-variant": "#a9abb0",
+            "inverse-on-surface": "#535559",
+            "on-primary-fixed-variant": "#00207d",
+            "on-primary-container": "#001967",
+            "error-container": "#9f0519"
+          },
+          fontFamily: {
+            "headline": ["Space Grotesk"],
+            "body": ["Manrope"],
+            "label": ["Space Grotesk"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    body { font-family: 'Manrope', sans-serif; background-color: #0c0e12; color: #f8f9fe; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .neon-glow-primary { box-shadow: 0 0 20px rgba(151, 169, 255, 0.15); }
+    .token-glow-red { box-shadow: inset 0 0 8px #ff716c, 0 0 12px rgba(255, 113, 108, 0.3); }
+    .token-glow-green { box-shadow: inset 0 0 8px #1dfba5, 0 0 12px rgba(29, 251, 165, 0.3); }
+    .token-glow-blue { box-shadow: inset 0 0 8px #97a9ff, 0 0 12px rgba(151, 169, 255, 0.3); }
+    .token-glow-yellow { box-shadow: inset 0 0 8px #ff909e, 0 0 12px rgba(255, 144, 158, 0.3); }
+    .token-glow-white { box-shadow: inset 0 0 8px #f8f9fe, 0 0 12px rgba(248, 249, 254, 0.3); }
+    .glass-panel { backdrop-filter: blur(12px); background: rgba(34, 38, 43, 0.4); border: 1px solid rgba(70, 72, 76, 0.15); }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #46484c; border-radius: 10px; }
+  </style>
+</head>
+<body class="overflow-hidden h-screen bg-background text-on-background">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-[#0c0e12] flex justify-between items-center px-6 py-4 z-50 shadow-[0_0_20px_rgba(151,169,255,0.1)] tonal shift bg-[#111417]">
+<div class="flex items-center gap-8">
+<h1 class="text-2xl font-black text-[#97a9ff] tracking-widest font-['Space_Grotesk'] tracking-tighter uppercase">TROCA</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-[#a9abb0] hover:opacity-80 transition-opacity p-2 active:scale-95 duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-8 w-px bg-outline-variant/20 mx-2"></div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="text-xs font-bold font-headline uppercase tracking-widest text-on-surface">Player One</p>
+<p class="text-[10px] text-primary tracking-widest uppercase">Rank: Diamond</p>
+</div>
+<button class="text-[#97a9ff] hover:opacity-80 transition-opacity active:scale-95 duration-200">
+<span class="material-symbols-outlined text-3xl" data-weight="fill" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<div class="flex h-[calc(100vh-72px)] overflow-hidden">
+<!-- SideNavBar (Game Stats & History) -->
+<aside class="h-full w-80 bg-[#0c0e12] flex flex-col p-6 z-40 border-r border-[#46484c]/15">
+<div class="space-y-6 flex-1 overflow-y-auto pr-2">
+<!-- Game Stats -->
+<div class="space-y-4">
+<label class="font-['Space_Grotesk'] text-[10px] uppercase tracking-[0.2em] text-on-surface-variant font-bold">Resumo da Partida</label>
+<div class="grid grid-cols-1 gap-3">
+<div class="bg-surface-container-low p-4 rounded-xl flex items-center justify-between group hover:bg-surface-container transition-all">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">data_usage</span>
+<span class="text-sm font-medium text-on-surface-variant">Ações Totais</span>
+</div>
+<span class="text-lg font-black font-headline text-primary">24</span>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl flex items-center justify-between group hover:bg-surface-container transition-all">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">casino</span>
+<span class="text-sm font-medium text-on-surface-variant">Lançamentos</span>
+</div>
+<span class="text-lg font-black font-headline text-secondary">12</span>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl flex items-center justify-between group hover:bg-surface-container transition-all">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary">swap_horiz</span>
+<span class="text-sm font-medium text-on-surface-variant">Trocas Realizadas</span>
+</div>
+<span class="text-lg font-black font-headline text-tertiary">08</span>
+</div>
+</div>
+</div>
+<!-- History -->
+<div class="pt-4 space-y-4">
+<label class="font-['Space_Grotesk'] text-[10px] uppercase tracking-[0.2em] text-on-surface-variant font-bold">Histórico Recente</label>
+<div class="space-y-2">
+<div class="flex items-start gap-3 p-3 bg-surface-container-lowest/50 rounded-lg border border-outline-variant/10">
+<div class="w-2 h-2 rounded-full bg-secondary mt-1.5"></div>
+<div>
+<p class="text-xs font-bold text-on-surface">Lançou Dado</p>
+<p class="text-[10px] text-on-surface-variant">Resultado: +2 Verdes, -1 Branco</p>
+</div>
+</div>
+<div class="flex items-start gap-3 p-3 bg-surface-container-lowest/50 rounded-lg border border-outline-variant/10">
+<div class="w-2 h-2 rounded-full bg-tertiary mt-1.5"></div>
+<div>
+<p class="text-xs font-bold text-on-surface">Troca Efetuada</p>
+<p class="text-[10px] text-on-surface-variant">3 Amarelos por 1 Azul</p>
+</div>
+</div>
+<div class="flex items-start gap-3 p-3 bg-surface-container-lowest/50 rounded-lg border border-outline-variant/10">
+<div class="w-2 h-2 rounded-full bg-primary mt-1.5"></div>
+<div>
+<p class="text-xs font-bold text-on-surface">Início de Turno</p>
+<p class="text-[10px] text-on-surface-variant">Cotações atualizadas</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- SideNav Footer CTA -->
+<button class="mt-auto w-full py-4 bg-primary text-on-primary font-black font-headline uppercase tracking-widest rounded-xl hover:brightness-110 transition-all click-bounce-effect flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">casino</span>
+        Lançar Dado
+      </button>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto p-8 space-y-8 bg-surface">
+<!-- Inventory Section -->
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<label class="font-headline text-[12px] uppercase tracking-[0.3em] text-on-surface-variant font-bold">SEU INVENTÁRIO</label>
+<span class="text-[10px] text-outline px-2 py-1 bg-surface-container rounded border border-outline-variant/10">MAX 50</span>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+<!-- Token: Red -->
+<div class="bg-surface-container-low p-5 rounded-2xl flex flex-col items-center gap-3 border border-outline-variant/5">
+<div class="w-12 h-12 rounded-full bg-error token-glow-red flex items-center justify-center">
+<span class="material-symbols-outlined text-on-error">local_fire_department</span>
+</div>
+<div class="text-center">
+<p class="text-2xl font-black font-headline text-on-surface">14</p>
+<p class="text-[10px] uppercase font-bold text-error-dim tracking-tighter">Vermelhos</p>
+</div>
+</div>
+<!-- Token: Green -->
+<div class="bg-surface-container-low p-5 rounded-2xl flex flex-col items-center gap-3 border border-outline-variant/5">
+<div class="w-12 h-12 rounded-full bg-secondary token-glow-green flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary">eco</span>
+</div>
+<div class="text-center">
+<p class="text-2xl font-black font-headline text-on-surface">06</p>
+<p class="text-[10px] uppercase font-bold text-secondary-dim tracking-tighter">Verdes</p>
+</div>
+</div>
+<!-- Token: White -->
+<div class="bg-surface-container-low p-5 rounded-2xl flex flex-col items-center gap-3 border border-outline-variant/5">
+<div class="w-12 h-12 rounded-full bg-on-surface token-glow-white flex items-center justify-center">
+<span class="material-symbols-outlined text-surface">circle</span>
+</div>
+<div class="text-center">
+<p class="text-2xl font-black font-headline text-on-surface">22</p>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant tracking-tighter">Brancos</p>
+</div>
+</div>
+<!-- Token: Yellow -->
+<div class="bg-surface-container-low p-5 rounded-2xl flex flex-col items-center gap-3 border border-outline-variant/5">
+<div class="w-12 h-12 rounded-full bg-tertiary-fixed token-glow-yellow flex items-center justify-center">
+<span class="material-symbols-outlined text-on-tertiary">star</span>
+</div>
+<div class="text-center">
+<p class="text-2xl font-black font-headline text-on-surface">03</p>
+<p class="text-[10px] uppercase font-bold text-tertiary tracking-tighter">Amarelos</p>
+</div>
+</div>
+<!-- Token: Blue -->
+<div class="bg-surface-container-low p-5 rounded-2xl flex flex-col items-center gap-3 border border-outline-variant/5">
+<div class="w-12 h-12 rounded-full bg-primary token-glow-blue flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary">ac_unit</span>
+</div>
+<div class="text-center">
+<p class="text-2xl font-black font-headline text-on-surface">09</p>
+<p class="text-[10px] uppercase font-bold text-primary tracking-tighter">Azuis</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Objective and Action Area -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+<!-- Target Card -->
+<div class="lg:col-span-4 bg-surface-container-high p-8 rounded-3xl border border-primary/20 relative overflow-hidden flex flex-col justify-between">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+<div class="relative z-10">
+<label class="font-headline text-[10px] uppercase tracking-[0.2em] text-primary font-bold">Objetivo Atual</label>
+<h2 class="text-3xl font-black font-headline mt-2 leading-none uppercase">CONTRATO ALPHA</h2>
+<p class="text-sm text-on-surface-variant mt-4 leading-relaxed">Entregue os recursos abaixo para subir de patente.</p>
+</div>
+<div class="relative z-10 mt-8 space-y-3">
+<div class="flex items-center justify-between p-3 bg-surface-container-lowest/40 rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-primary token-glow-blue"></div>
+<span class="text-xs font-bold text-on-surface">Azuis</span>
+</div>
+<span class="text-sm font-black font-headline">09 / 15</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-container-lowest/40 rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-tertiary token-glow-yellow"></div>
+<span class="text-xs font-bold text-on-surface">Amarelos</span>
+</div>
+<span class="text-sm font-black font-headline">03 / 05</span>
+</div>
+</div>
+<div class="relative z-10 mt-6 pt-4 border-t border-outline-variant/20 flex justify-between items-center">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Recompensa</span>
+<span class="text-secondary font-black font-headline">+500 XP</span>
+</div>
+</div>
+<!-- Big Launch Button area -->
+<div class="lg:col-span-8 bg-surface-container p-1 rounded-3xl border border-outline-variant/10">
+<button class="w-full h-full bg-gradient-to-br from-primary-dim to-primary rounded-[1.4rem] flex flex-col items-center justify-center gap-6 p-12 group transition-all hover:brightness-110 active:scale-[0.98] relative overflow-hidden">
+<div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+<div class="w-24 h-24 rounded-2xl bg-on-primary-fixed/20 flex items-center justify-center rotate-12 group-hover:rotate-0 transition-transform duration-500">
+<span class="material-symbols-outlined text-6xl text-on-primary-container font-black">casino</span>
+</div>
+<div class="text-center relative z-10">
+<span class="block text-5xl font-black font-headline text-on-primary-container uppercase tracking-tighter">Lançar Dado</span>
+<span class="text-on-primary-container/70 text-sm font-medium tracking-widest uppercase mt-2 block">Custo: 1 Ação</span>
+</div>
+</button>
+</div>
+</section>
+<!-- Active Quotes -->
+<section class="space-y-4">
+<label class="font-headline text-[12px] uppercase tracking-[0.3em] text-on-surface-variant font-bold">Cotações Ativas (Mercado)</label>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-surface-container-low p-4 rounded-2xl border border-outline-variant/10 hover:border-primary/30 transition-all cursor-pointer group">
+<div class="flex items-center justify-between mb-4">
+<span class="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest">Troca Padrão</span>
+<span class="material-symbols-outlined text-primary text-sm">trending_flat</span>
+</div>
+<div class="flex items-center justify-around gap-2">
+<div class="text-center">
+<div class="w-8 h-8 rounded-full bg-on-surface mx-auto mb-1 token-glow-white"></div>
+<p class="text-[10px] font-bold">3x BRANCO</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant">swap_horiz</span>
+<div class="text-center">
+<div class="w-8 h-8 rounded-full bg-secondary mx-auto mb-1 token-glow-green"></div>
+<p class="text-[10px] font-bold">1x VERDE</p>
+</div>
+</div>
+<button class="w-full mt-4 py-2 rounded-lg bg-surface-variant text-[10px] font-bold uppercase tracking-widest text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">Executar Troca</button>
+</div>
+<div class="bg-surface-container-low p-4 rounded-2xl border border-outline-variant/10 hover:border-primary/30 transition-all cursor-pointer group">
+<div class="flex items-center justify-between mb-4">
+<span class="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest">Cotação Rara</span>
+<span class="material-symbols-outlined text-tertiary text-sm">bolt</span>
+</div>
+<div class="flex items-center justify-around gap-2">
+<div class="text-center">
+<div class="w-8 h-8 rounded-full bg-secondary mx-auto mb-1 token-glow-green"></div>
+<p class="text-[10px] font-bold">2x VERDE</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant">swap_horiz</span>
+<div class="text-center">
+<div class="w-8 h-8 rounded-full bg-tertiary mx-auto mb-1 token-glow-yellow"></div>
+<p class="text-[10px] font-bold">1x AMARELO</p>
+</div>
+</div>
+<button class="w-full mt-4 py-2 rounded-lg bg-surface-variant text-[10px] font-bold uppercase tracking-widest text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">Executar Troca</button>
+</div>
+<div class="bg-surface-container-low p-4 rounded-2xl border border-outline-variant/10 hover:border-primary/30 transition-all cursor-pointer group border-secondary/20 bg-secondary/5">
+<div class="flex items-center justify-between mb-4">
+<span class="text-[10px] text-secondary uppercase font-bold tracking-widest">Bônus Ativo</span>
+<span class="material-symbols-outlined text-secondary text-sm">stars</span>
+</div>
+<div class="flex items-center justify-around gap-2">
+<div class="text-center">
+<div class="w-8 h-8 rounded-full bg-tertiary mx-auto mb-1 token-glow-yellow"></div>
+<p class="text-[10px] font-bold">2x AMARELO</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant">swap_horiz</span>
+<div class="text-center">
+<div class="w-8 h-8 rounded-full bg-primary mx-auto mb-1 token-glow-blue"></div>
+<p class="text-[10px] font-bold">1x AZUL</p>
+</div>
+</div>
+<button class="w-full mt-4 py-2 rounded-lg bg-secondary text-[10px] font-bold uppercase tracking-widest text-on-secondary transition-colors">Executar Troca</button>
+</div>
+<div class="bg-surface-container-low p-4 rounded-2xl border border-outline-variant/10 hover:border-primary/30 transition-all cursor-pointer group">
+<div class="flex items-center justify-between mb-4">
+<span class="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest">Queima Estoque</span>
+<span class="material-symbols-outlined text-error text-sm">fire_truck</span>
+</div>
+<div class="flex items-center justify-around gap-2">
+<div class="text-center">
+<div class="w-8 h-8 rounded-full bg-error mx-auto mb-1 token-glow-red"></div>
+<p class="text-[10px] font-bold">5x VERMELHO</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant">swap_horiz</span>
+<div class="text-center">
+<div class="w-8 h-8 rounded-full bg-primary mx-auto mb-1 token-glow-blue"></div>
+<p class="text-[10px] font-bold">1x AZUL</p>
+</div>
+</div>
+<button class="w-full mt-4 py-2 rounded-lg bg-surface-variant text-[10px] font-bold uppercase tracking-widest text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">Executar Troca</button>
+</div>
+</div>
+</section>
+</main>
+</div>
+<!-- BottomNavBar (Mobile Only Logic) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 bg-[#0c0e12]/80 backdrop-blur-xl z-50 rounded-t-2xl shadow-[0_-4px_24px_rgba(0,0,0,0.5)]">
+<div class="flex flex-col items-center justify-center bg-[#97a9ff]/10 text-[#97a9ff] rounded-xl px-4 py-1">
+<span class="material-symbols-outlined">casino</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase">Play</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#a9abb0] px-4 py-1 hover:text-white transition-colors">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase">Store</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#a9abb0] px-4 py-1 hover:text-white transition-colors">
+<span class="material-symbols-outlined">group</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase">Social</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#a9abb0] px-4 py-1 hover:text-white transition-colors">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase">Profile</span>
+</div>
+</nav>
+</body></html>

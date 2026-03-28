@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-br"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TROCA - Criar Conta</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container": "#171a1e",
+              "error-dim": "#d7383b",
+              "outline": "#73757a",
+              "tertiary-fixed-dim": "#ff788c",
+              "tertiary-container": "#fb2a60",
+              "primary-fixed-dim": "#718bff",
+              "surface-tint": "#97a9ff",
+              "surface-dim": "#0c0e12",
+              "inverse-primary": "#124af1",
+              "surface-variant": "#22262b",
+              "primary-fixed": "#849aff",
+              "secondary-fixed-dim": "#00ec9a",
+              "on-secondary-fixed-variant": "#00653f",
+              "surface-container-high": "#1c2025",
+              "error": "#ff716c",
+              "on-primary": "#002283",
+              "on-secondary-container": "#e1ffe9",
+              "tertiary-fixed": "#ff909e",
+              "on-secondary": "#005a38",
+              "primary-dim": "#3e65ff",
+              "on-error-container": "#ffa8a3",
+              "surface-container-low": "#111417",
+              "surface-container-highest": "#22262b",
+              "background": "#0c0e12",
+              "tertiary": "#ff6e84",
+              "outline-variant": "#46484c",
+              "on-primary-fixed": "#000000",
+              "secondary": "#1dfba5",
+              "inverse-surface": "#f8f9fe",
+              "secondary-fixed": "#1dfba5",
+              "on-tertiary-fixed": "#39000e",
+              "on-secondary-fixed": "#00452a",
+              "on-tertiary": "#480013",
+              "secondary-container": "#006c44",
+              "primary-container": "#849aff",
+              "surface-container-lowest": "#000000",
+              "on-surface": "#f8f9fe",
+              "secondary-dim": "#00ec9a",
+              "tertiary-dim": "#e51152",
+              "on-error": "#490006",
+              "primary": "#97a9ff",
+              "surface-bright": "#282c32",
+              "on-background": "#f8f9fe",
+              "surface": "#0c0e12",
+              "on-tertiary-container": "#000000",
+              "on-surface-variant": "#a9abb0",
+              "inverse-on-surface": "#535559",
+              "on-primary-fixed-variant": "#00207d",
+              "on-primary-container": "#001967",
+              "error-container": "#9f0519"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Manrope"],
+              "label": ["Space Grotesk"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glow-subtle {
+            box-shadow: 0 0 20px rgba(151, 169, 255, 0.08);
+        }
+        .neon-border-glow {
+            box-shadow: 0 0 15px rgba(151, 169, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
+<!-- Kinetic Void Background Elements -->
+<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]"></div>
+<div class="absolute bottom-[-5%] right-[-5%] w-[30%] h-[30%] bg-secondary/5 rounded-full blur-[100px]"></div>
+<!-- Main Container -->
+<main class="w-full max-w-md z-10">
+<!-- Header / Logo Area -->
+<header class="text-center mb-12">
+<h1 class="font-headline text-5xl font-black text-primary tracking-widest mb-2">TROCA</h1>
+<p class="font-label text-on-surface-variant text-sm tracking-[0.2em] uppercase">Inicie sua Jornada no Arena</p>
+</header>
+<!-- Registration Card -->
+<section class="bg-surface-container-low rounded-xl p-8 shadow-2xl relative overflow-hidden">
+<!-- Subtle HUD elements -->
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-4xl" data-icon="grid_view">grid_view</span>
+</div>
+<form action="#" class="space-y-6">
+<!-- Name Field -->
+<div class="space-y-2">
+<label class="font-label text-xs font-bold uppercase tracking-widest text-on-surface-variant block ml-1">Nome de Jogador</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors" data-icon="person">person</span>
+<input class="w-full bg-surface-variant border-none rounded-lg py-4 pl-12 pr-4 text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary transition-all font-body" placeholder="EX: PLAYER_ONE" type="text"/>
+</div>
+</div>
+<!-- Email Field -->
+<div class="space-y-2">
+<label class="font-label text-xs font-bold uppercase tracking-widest text-on-surface-variant block ml-1">E-mail</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors" data-icon="alternate_email">alternate_email</span>
+<input class="w-full bg-surface-variant border-none rounded-lg py-4 pl-12 pr-4 text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary transition-all font-body" placeholder="seu@email.com" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-2">
+<label class="font-label text-xs font-bold uppercase tracking-widest text-on-surface-variant block ml-1">Senha de Acesso</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors" data-icon="lock">lock</span>
+<input class="w-full bg-surface-variant border-none rounded-lg py-4 pl-12 pr-12 text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary transition-all font-body" placeholder="••••••••" type="password"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant cursor-pointer hover:text-on-surface" data-icon="visibility">visibility</span>
+</div>
+</div>
+<!-- Visual Token Hint -->
+<div class="flex items-center gap-3 py-2 px-1">
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center neon-border-glow">
+<span class="material-symbols-outlined text-[10px] text-on-primary" data-icon="stars" style="font-variation-settings: 'FILL' 1;">stars</span>
+</div>
+<div class="w-6 h-6 rounded-full bg-secondary flex items-center justify-center border-2 border-surface-container-low shadow-[0_0_10px_rgba(29,251,165,0.4)]">
+<span class="material-symbols-outlined text-[10px] text-on-secondary" data-icon="bolt" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<div class="w-6 h-6 rounded-full bg-tertiary flex items-center justify-center border-2 border-surface-container-low">
+<span class="material-symbols-outlined text-[10px] text-on-tertiary" data-icon="token" style="font-variation-settings: 'FILL' 1;">token</span>
+</div>
+</div>
+<p class="text-[10px] font-label uppercase tracking-wider text-on-surface-variant leading-tight">
+                        Complete o cadastro para receber seu <span class="text-secondary font-bold">Pacote Inicial</span> de Tokens.
+                    </p>
+</div>
+<!-- CTA Button -->
+<button class="w-full bg-primary text-on-primary font-headline font-bold py-5 rounded-lg text-lg uppercase tracking-widest shadow-[0_0_25px_rgba(151,169,255,0.25)] hover:bg-primary-fixed hover:shadow-[0_0_35px_rgba(151,169,255,0.4)] active:scale-[0.98] transition-all flex items-center justify-center gap-3" type="submit">
+                    Criar Conta
+                    <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</form>
+<!-- Footer Link -->
+<div class="mt-8 pt-6 border-t border-outline-variant/15 text-center">
+<p class="text-on-surface-variant text-sm">
+                    Já possui um registro? 
+                    <a class="text-primary font-bold hover:underline ml-1" href="#">Acessar Arena</a>
+</p>
+</div>
+</section>
+<!-- Terms & Privacy -->
+<footer class="mt-8 text-center px-4">
+<p class="text-[10px] text-outline font-body leading-relaxed max-w-[280px] mx-auto">
+                Ao clicar em Criar Conta, você concorda com nossos Termos de Combate e Políticas de Troca Neutral.
+            </p>
+</footer>
+</main>
+<!-- Decorative Corner Accents -->
+<div class="fixed top-0 left-0 w-32 h-32 border-l border-t border-primary/20 m-4 rounded-tl-3xl pointer-events-none"></div>
+<div class="fixed bottom-0 right-0 w-32 h-32 border-r border-b border-primary/20 m-4 rounded-br-3xl pointer-events-none"></div>
+</body></html>

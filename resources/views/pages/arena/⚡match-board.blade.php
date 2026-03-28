@@ -5,8 +5,10 @@ use App\Models\MatchStatus;
 use App\Models\ParticipantType;
 use App\Services\CardPurchaseService;
 use App\Services\DiceService;
+use App\Services\MatchFinalizationService;
 use App\Services\TokenLimitService;
 use App\Services\TradeService;
+use App\Services\TurnService;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -24,6 +26,8 @@ new #[Layout('layouts::app')] #[\Livewire\Attributes\Title('Partida')] class ext
     public ?string $flashType = null;
 
     public ?int $lastPointsScored = null;
+
+    public bool $aiThinking = false;
 
     public function mount(GameMatch $match): void
     {
@@ -106,6 +110,14 @@ new #[Layout('layouts::app')] #[\Livewire\Attributes\Title('Partida')] class ext
             $this->lastPointsScored = $points;
             $this->setFlash("+{$points} pontos!", 'success');
             $this->refreshMatch();
+
+            $this->match->refresh();
+            if ($this->match->compartments_emptied >= 2) {
+                app(MatchFinalizationService::class)->finalize($this->match);
+                $this->redirect(route('arena.match.results', $this->match), navigate: true);
+
+                return;
+            }
         } catch (\InvalidArgumentException $e) {
             $this->setFlash($e->getMessage(), 'error');
         }
@@ -119,6 +131,34 @@ new #[Layout('layouts::app')] #[\Livewire\Attributes\Title('Partida')] class ext
         try {
             $tokenLimitService->returnTokens($this->match, $playerType->id, $tokensToReturn);
             $this->refreshMatch();
+        } catch (\InvalidArgumentException $e) {
+            $this->setFlash($e->getMessage(), 'error');
+        }
+    }
+
+    public function endTurn(TurnService $turnService): void
+    {
+        $this->resetFlash();
+
+        try {
+            $turnService->endTurn($this->match);
+
+            $this->match->refresh();
+
+            $completedStatus = MatchStatus::completed()->first();
+            if ($completedStatus && $this->match->match_status_id === $completedStatus->id) {
+                $this->redirect(route('arena.match.results', $this->match), navigate: true);
+
+                return;
+            }
+
+            $aiType = ParticipantType::where('slug', 'ai')->first();
+            if ($this->match->current_participant_type_id === $aiType->id) {
+                $this->aiThinking = true;
+            }
+
+            $this->refreshMatch();
+            $this->aiThinking = false;
         } catch (\InvalidArgumentException $e) {
             $this->setFlash($e->getMessage(), 'error');
         }
@@ -164,6 +204,12 @@ new #[Layout('layouts::app')] #[\Livewire\Attributes\Title('Partida')] class ext
     public function canPurchase(): bool
     {
         return $this->isPlayerTurn && $this->match->has_acted_this_turn;
+    }
+
+    #[Computed]
+    public function canEndTurn(): bool
+    {
+        return $this->isPlayerTurn && $this->match->has_acted_this_turn && ! $this->needsTokenReturn;
     }
 
     #[Computed]
@@ -360,6 +406,32 @@ new #[Layout('layouts::app')] #[\Livewire\Attributes\Title('Partida')] class ext
                 @endforeach
             </div>
         </section>
+
+        {{-- End Turn Button --}}
+        @if ($this->canEndTurn)
+            <section>
+                <div class="bg-surface-container p-1 rounded-3xl border border-outline-variant/10">
+                    <button
+                        wire:click="endTurn"
+                        class="w-full rounded-[1.4rem] flex flex-col items-center justify-center gap-3 p-6 group transition-all bg-gradient-to-br from-secondary-dim to-secondary hover:brightness-110 active:scale-[0.98]"
+                    >
+                        <span class="material-symbols-outlined text-4xl text-on-secondary">skip_next</span>
+                        <span class="text-2xl font-black font-display text-on-secondary uppercase tracking-tighter">Encerrar Turno</span>
+                    </button>
+                </div>
+            </section>
+        @endif
+
+        {{-- AI Thinking State --}}
+        @if ($aiThinking)
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+                <div class="bg-surface-container p-8 rounded-3xl border border-outline-variant/10 max-w-sm w-full mx-4 text-center space-y-4">
+                    <span class="material-symbols-outlined text-5xl text-tertiary animate-pulse">smart_toy</span>
+                    <h2 class="text-xl font-black font-display text-on-surface uppercase">IA Pensando...</h2>
+                    <p class="text-sm text-on-surface-variant">Aguarde enquanto a IA realiza sua jogada</p>
+                </div>
+            </div>
+        @endif
 
         {{-- Token Return UI (shown only when over 10 tokens) --}}
         @if ($this->needsTokenReturn)

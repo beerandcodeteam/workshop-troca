@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('verified')->group(function () {
         Route::livewire('/arena', 'pages::arena.index')->name('arena');
         Route::livewire('/arena/new-match', 'pages::arena.match-setup')->name('arena.match-setup');
-        Route::livewire('/arena/match/{match}', 'pages::arena.match-show')->name('arena.match.show');
+        Route::livewire('/arena/match/{match}', 'pages::arena.match-board')->name('arena.match.show');
+        Route::livewire('/arena/match/{match}/results', 'pages::arena.match-results')->name('arena.match.results');
     });
 });

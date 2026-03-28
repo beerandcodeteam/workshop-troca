@@ -45,8 +45,6 @@ Route::middleware('auth')->group(function () {
 
     // Protected routes (auth + verified)
     Route::middleware('verified')->group(function () {
-        Route::get('/arena', function () {
-            return view('welcome'); // placeholder until Phase 4
-        })->name('arena');
+        Route::livewire('/arena', 'pages::arena.index')->name('arena');
     });
 });

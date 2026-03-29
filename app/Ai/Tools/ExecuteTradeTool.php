@@ -2,6 +2,7 @@
 
 namespace App\Ai\Tools;
 
+use App\Helpers\BoardSummaryHelper;
 use App\Models\GameMatch;
 use App\Models\ParticipantType;
 use App\Services\TradeService;
@@ -42,7 +43,12 @@ class ExecuteTradeTool implements Tool
             return $e->getMessage();
         }
 
-        return $this->gameMatch->tokenInventories->load('tokenColor');
+        if ($this->gameMatch->difficultyTier->slug == "padrao-primario")
+        {
+            return $this->gameMatch->tokenInventories->load('tokenColor');
+        }
+
+        return "Troca Realizada\n" . BoardSummaryHelper::inventorySummary($this->gameMatch);
     }
 
     /**

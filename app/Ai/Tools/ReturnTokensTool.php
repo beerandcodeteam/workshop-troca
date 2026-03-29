@@ -2,6 +2,7 @@
 
 namespace App\Ai\Tools;
 
+use App\Helpers\BoardSummaryHelper;
 use App\Models\GameMatch;
 use App\Services\TokenLimitService;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -36,7 +37,12 @@ class ReturnTokensTool implements Tool
             return $exception->getMessage();
         }
 
-        return $this->gameMatch->tokenInventories->load('tokenColor');
+        if ($this->gameMatch->difficultyTier->slug == "padrao-primario")
+        {
+            return $this->gameMatch->tokenInventories->load('tokenColor');
+        }
+
+        return "Tokens devolvidos!\n" . BoardSummaryHelper::inventorySummary($this->gameMatch);
     }
 
     /**

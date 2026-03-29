@@ -2,6 +2,7 @@
 
 namespace App\Ai\Tools;
 
+use App\Helpers\BoardSummaryHelper;
 use App\Models\GameMatch;
 use App\Services\CardPurchaseService;
 use Exception;
@@ -37,7 +38,12 @@ class PurchaseCardTool implements Tool
             return $e->getMessage();
         }
 
-        return $this->gameMatch;
+        if ($this->gameMatch->difficultyTier->slug == "padrao-primario")
+        {
+            return $this->gameMatch->tokenInventories->load('tokenColor');
+        }
+
+        return "Carta comprada\n" . BoardSummaryHelper::inventorySummary($this->gameMatch);
     }
 
     /**

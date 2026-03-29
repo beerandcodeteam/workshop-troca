@@ -2,11 +2,11 @@
 
 namespace App\Ai\Agents;
 
-use App\Ai\Tools\AnalyzeBoardTool;
 use App\Ai\Tools\ChooseFreeColorTool;
 use App\Ai\Tools\EndTurnTool;
 use App\Ai\Tools\ExecuteTradeTool;
 use App\Ai\Tools\GetExcessTokenCountTool;
+use App\Ai\Tools\ImprovedAnalyzeBoardTool;
 use App\Ai\Tools\PurchaseCardTool;
 use App\Ai\Tools\ReturnTokensTool;
 use App\Ai\Tools\RollDiceTool;
@@ -23,19 +23,22 @@ use Laravel\Ai\Promptable;
 use Stringable;
 
 #[Provider(Lab::OpenAI)]
-#[Model('gpt-5.4-nano')]
-class EasyAgent implements Agent, Conversational, HasTools
+#[Model('gpt-5.4-mini')]
+class MediumAgent implements Agent, Conversational, HasTools
 {
-    use Promptable;
 
-    public function __construct(private GameMatch $gameMatch) {}
+    public function __construct(private GameMatch $gameMatch)
+    {
+    }
+
+    use Promptable;
 
     /**
      * Get the instructions that the agent should follow.
      */
     public function instructions(): Stringable|string
     {
-        return view('prompts.easy-agent');
+        return view('prompts.medium-agent');
     }
 
     /**
@@ -56,7 +59,7 @@ class EasyAgent implements Agent, Conversational, HasTools
     public function tools(): iterable
     {
         return [
-            new AnalyzeBoardTool($this->gameMatch),
+            new ImprovedAnalyzeBoardTool($this->gameMatch),
             new RollDiceTool($this->gameMatch),
             new ChooseFreeColorTool($this->gameMatch),
             new EndTurnTool($this->gameMatch),

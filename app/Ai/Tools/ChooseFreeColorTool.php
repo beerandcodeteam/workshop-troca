@@ -2,6 +2,7 @@
 
 namespace App\Ai\Tools;
 
+use App\Helpers\BoardSummaryHelper;
 use App\Models\GameMatch;
 use App\Models\ParticipantType;
 use App\Services\DiceService;
@@ -39,7 +40,12 @@ class ChooseFreeColorTool implements Tool
             return $e->getMessage();
         }
 
-        return $this->gameMatch->tokenInventories->load('tokenColor');
+        if ($this->gameMatch->difficultyTier->slug == "padrao-primario")
+        {
+            return $this->gameMatch->tokenInventories->load('tokenColor');
+        }
+
+        return "Cor escolhida: {$request['color']}\n" . BoardSummaryHelper::inventorySummary($this->gameMatch);
     }
 
     /**

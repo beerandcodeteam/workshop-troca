@@ -10,6 +10,10 @@ use App\Services\MatchFinalizationService;
 use App\Services\TokenLimitService;
 use App\Services\TradeService;
 use App\Services\TurnService;
+use Laravel\Ai\Streaming\Events\ReasoningDelta;
+use Laravel\Ai\Streaming\Events\TextDelta;
+use Laravel\Ai\Streaming\Events\ToolCall;
+use Laravel\Ai\Streaming\Events\ToolResult;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -31,6 +35,8 @@ class extends Component {
     public ?int $lastPointsScored = null;
 
     public bool $aiThinking = false;
+
+    public string $aiStreamContent = '';
 
     public function mount(GameMatch $match): void
     {
@@ -161,7 +167,7 @@ class extends Component {
             }
 
             $this->aiThinking = true;
-
+            $this->aiStreamContent = '';
             $this->dispatch('init-ai-turn');
 
         } catch (\InvalidArgumentException $e) {
@@ -313,7 +319,47 @@ class extends Component {
     #[On('init-ai-turn')]
     public function initAiTurn(AiOpponentService $aiOpponentService)
     {
-        $result = $aiOpponentService->executeTurn($this->match);
+        $stream = $aiOpponentService->executeTurn($this->match);
+        $stepNumber = 0;
+
+
+        foreach ($stream as $event) {
+
+
+            $html = match (true) {
+                $event instanceof ToolCall => '<div class="flex items-start gap-2 p-2 rounded-lg bg-tertiary/5">'
+                    . '<span class="material-symbols-outlined text-tertiary text-sm mt-0.5">build</span>'
+                    . '<div><span class="text-[10px] font-bold text-tertiary uppercase tracking-wider">Tool Call</span>'
+                    . '<p class="text-xs text-on-surface-variant">' . e($event->toolCall->name) . '</p></div></div>',
+
+                $event instanceof ToolResult => '<div class="flex items-start gap-2 p-2 rounded-lg bg-primary/5">'
+                    . '<span class="material-symbols-outlined text-sm mt-0.5 ' . ($event->successful ? 'text-primary' : 'text-error') . '">'
+                    . ($event->successful ? 'check_circle' : 'error') . '</span>'
+                    . '<div><span class="text-[10px] font-bold text-primary uppercase tracking-wider">Resultado</span>'
+                    . '<p class="text-xs text-on-surface-variant truncate max-w-[250px]">' . e(str()->limit((string)$event->toolResult->result, 120)) . '</p></div></div>',
+
+                $event instanceof ReasoningDelta => '<span class="text-xs text-on-surface-variant/60 italic">' . e($event->delta) . '</span>',
+
+                $event instanceof TextDelta => '<span class="text-xs text-on-surface-variant">' . e($event->delta) . '</span>',
+
+                default => null,
+            };
+
+            if ($html) {
+                $stepNumber++;
+                $this->aiStreamContent .= $html;
+                $this->stream(to: 'ai-stream', content: $html);
+            }
+        }
+
+        $completionHtml = '<div class="flex items-center gap-2 p-2 rounded-lg bg-secondary/10 mt-1">'
+            . '<span class="material-symbols-outlined text-secondary text-sm">done_all</span>'
+            . '<span class="text-xs font-bold text-secondary">Turno finalizado — ' . $stepNumber . ' steps</span></div>';
+
+        $this->aiStreamContent .= $completionHtml;
+        $this->stream(to: 'ai-stream', content: $completionHtml);
+
+
         $this->aiThinking = false;
         $this->match->refresh();
     }
@@ -385,8 +431,8 @@ class extends Component {
 
             {{-- Abandon Match --}}
             <button
-                wire:click="confirmAbandon"
-                class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold uppercase tracking-wide bg-danger/10 border border-danger/20 text-danger hover:bg-danger/20 transition-all mt-4"
+                    wire:click="confirmAbandon"
+                    class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold uppercase tracking-wide bg-danger/10 border border-danger/20 text-danger hover:bg-danger/20 transition-all mt-4"
             >
                 <span class="material-symbols-outlined text-lg">flag</span>
                 Abandonar Partida
@@ -399,13 +445,13 @@ class extends Component {
         {{-- Action Bar --}}
         <div class="flex items-center gap-3 flex-wrap">
             <button
-                wire:click="rollDice"
-                @class([
-                    'inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold uppercase tracking-wide transition-all',
-                    'bg-primary text-on-primary hover:brightness-110 active:scale-95' => $this->canRollOrTrade,
-                    'bg-surface-variant/50 text-on-surface-variant/50 cursor-not-allowed' => !$this->canRollOrTrade,
-                ])
-                @if (!$this->canRollOrTrade) disabled @endif
+                    wire:click="rollDice"
+                    @class([
+                        'inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold uppercase tracking-wide transition-all',
+                        'bg-primary text-on-primary hover:brightness-110 active:scale-95' => $this->canRollOrTrade,
+                        'bg-surface-variant/50 text-on-surface-variant/50 cursor-not-allowed' => !$this->canRollOrTrade,
+                    ])
+                    @if (!$this->canRollOrTrade) disabled @endif
             >
                 <span class="material-symbols-outlined text-lg">casino</span>
                 Lançar Dado
@@ -413,8 +459,8 @@ class extends Component {
 
             @if ($this->canEndTurn)
                 <button
-                    wire:click="endTurn"
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold uppercase tracking-wide bg-secondary text-on-secondary hover:brightness-110 active:scale-95 transition-all"
+                        wire:click="endTurn"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold uppercase tracking-wide bg-secondary text-on-secondary hover:brightness-110 active:scale-95 transition-all"
                 >
                     <span class="material-symbols-outlined text-lg">skip_next</span>
                     Encerrar Turno
@@ -436,8 +482,8 @@ class extends Component {
 
         {{-- Token Inventories --}}
         <div class="space-y-4">
-            <x-token-inventory :inventories="$this->playerInventories" label="Seu Inventário" />
-            <x-token-inventory :inventories="$this->aiInventories" label="Inventário da IA" />
+            <x-token-inventory :inventories="$this->playerInventories" label="Seu Inventário"/>
+            <x-token-inventory :inventories="$this->aiInventories" label="Inventário da IA"/>
         </div>
 
         {{-- Card Compartments --}}
@@ -470,22 +516,30 @@ class extends Component {
             </div>
         </section>
 
-        {{-- AI Thinking State --}}
-        @if ($aiThinking)
-            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-                <div class="bg-surface-container p-8 rounded-3xl border border-outline-variant/10 max-w-sm w-full mx-4 text-center space-y-4">
-                    <span class="material-symbols-outlined text-5xl text-tertiary animate-pulse">smart_toy</span>
-                    <h2 class="text-xl font-black font-display text-on-surface uppercase">IA Pensando...</h2>
-                    <p class="text-sm text-on-surface-variant">Aguarde enquanto a IA realiza sua jogada</p>
-                </div>
-            </div>
-        @endif
-
         {{-- Token Return UI (shown only when over 10 tokens) --}}
         @if ($this->needsTokenReturn)
             <livewire:arena.token-return :match="$this->match" :key="'token-return-' . $this->match->id"/>
         @endif
     </main>
+
+    <aside class="hidden lg:block w-80 shrink-0">
+        <div class="sticky top-6 space-y-3">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-tertiary text-sm">psychology</span>
+                <label class="font-headline text-[10px] uppercase tracking-[0.2em] text-on-surface-variant font-bold">Raciocínio
+                    da IA</label>
+            </div>
+            <div class="bg-surface-container-low rounded-xl border border-outline-variant/10 p-4 max-h-[70vh] overflow-y-auto">
+                <div wire:stream="ai-stream" class="space-y-2 text-sm">
+                    @if ($aiStreamContent)
+                        {!! $aiStreamContent !!}
+                    @elseif (! $aiThinking)
+                        <p class="text-xs text-on-surface-variant/40 italic">Aguardando turno da IA...</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </aside>
 
     {{-- Abandon Confirmation Modal --}}
     @if ($showAbandonConfirm)
@@ -493,17 +547,18 @@ class extends Component {
             <div class="bg-surface-container p-8 rounded-3xl border border-outline-variant/10 max-w-sm w-full mx-4 text-center space-y-6">
                 <span class="material-symbols-outlined text-5xl text-danger">warning</span>
                 <h2 class="text-xl font-black font-display text-on-surface uppercase">Abandonar Partida?</h2>
-                <p class="text-sm text-on-surface-variant">Essa ação não pode ser desfeita. Você não receberá XP por esta partida.</p>
+                <p class="text-sm text-on-surface-variant">Essa ação não pode ser desfeita. Você não receberá XP por
+                    esta partida.</p>
                 <div class="flex gap-3">
                     <button
-                        wire:click="cancelAbandon"
-                        class="flex-1 px-4 py-3 rounded-xl text-sm font-bold uppercase tracking-wide bg-surface-container-low border border-outline-variant/20 text-on-surface hover:bg-surface-container-high transition-all"
+                            wire:click="cancelAbandon"
+                            class="flex-1 px-4 py-3 rounded-xl text-sm font-bold uppercase tracking-wide bg-surface-container-low border border-outline-variant/20 text-on-surface hover:bg-surface-container-high transition-all"
                     >
                         Cancelar
                     </button>
                     <button
-                        wire:click="abandonMatch"
-                        class="flex-1 px-4 py-3 rounded-xl text-sm font-bold uppercase tracking-wide bg-danger text-on-danger hover:brightness-110 transition-all"
+                            wire:click="abandonMatch"
+                            class="flex-1 px-4 py-3 rounded-xl text-sm font-bold uppercase tracking-wide bg-danger text-on-danger hover:brightness-110 transition-all"
                     >
                         Abandonar
                     </button>

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Ai\Agents\EasyAgent;
+use App\Ai\Agents\MediumAgent;
 use App\Models\GameMatch;
 
 class AiOpponentService
@@ -11,7 +12,7 @@ class AiOpponentService
     {
         $agentClass = match ($match->difficultyTier->slug) {
             'padrao-primario' => EasyAgent::class,
-            'cadeia-cruzada' => 'hello world',
+            'cadeia-cruzada' => MediumAgent::class,
             'mestre-do-caos' => 'hello world'
         };
 
@@ -19,6 +20,6 @@ class AiOpponentService
             'gameMatch' => $match,
         ]);
 
-        return $agent->prompt('Sua Vez!');
+        return $agent->stream('Sua vez!');
     }
 }

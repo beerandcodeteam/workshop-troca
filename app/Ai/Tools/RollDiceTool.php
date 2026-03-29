@@ -2,6 +2,7 @@
 
 namespace App\Ai\Tools;
 
+use App\Helpers\BoardSummaryHelper;
 use App\Models\GameMatch;
 use App\Models\ParticipantType;
 use App\Services\DiceService;
@@ -43,7 +44,13 @@ class RollDiceTool implements Tool
             return $e->getMessage();
         }
 
-        return $this->gameMatch->tokenInventories->load('tokenColor');
+        //MODO AGENT FACIL
+        if ($this->gameMatch->difficultyTier->slug == "padrao-primario")
+        {
+            return $this->gameMatch->tokenInventories->load('tokenColor');
+        }
+
+        return "Dado: +1 {$roll}\n" . BoardSummaryHelper::inventorySummary($this->gameMatch);
     }
 
     /**

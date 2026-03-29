@@ -26,7 +26,7 @@ class AiOpponentService
             return $agent->continue($match->id, as: auth()->user())->stream('Sua Vez! Faça a sua jogada e explique a estrategia');
         }
 
-        return $agent->stream('Sua Vez! Faça a sua jogada e explique a estrategia');
+        return $agent->stream('Sua Vez!');
 
 
     }

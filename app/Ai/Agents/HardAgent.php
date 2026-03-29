@@ -24,7 +24,7 @@ use Laravel\Ai\Promptable;
 use Stringable;
 
 #[Provider(Lab::OpenAI)]
-#[Model('gpt-5.4')]
+#[Model('gpt-5.4-mini')]
 class HardAgent implements Agent, Conversational, HasTools
 {
     public function __construct(private GameMatch $gameMatch) {}
